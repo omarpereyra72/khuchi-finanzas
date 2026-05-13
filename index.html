@@ -576,6 +576,45 @@
   }
 
 
+  /* ====== LOGIN SCREEN ====== */
+  #login-screen {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+  #login-screen.hidden { display: none; }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px 36px;
+    width: min(420px, 100%);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .login-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 28px; }
+  .login-title { font-family: var(--font-display); font-size: 24px; text-align: center; margin-bottom: 6px; }
+  .login-sub { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 28px; }
+  .login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .login-field label { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-muted); }
+  .login-field input { font-size: 15px; padding: 10px 14px; }
+  .login-btn {
+    width: 100%; padding: 12px; border-radius: 12px;
+    border: none; background: var(--accent); color: #fff;
+    font-family: var(--font-body); font-size: 15px; font-weight: 700;
+    cursor: pointer; margin-top: 8px;
+    transition: all var(--transition);
+  }
+  .login-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .login-error { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--red); margin-top: 12px; display: none; text-align: center; }
+  .login-error.show { display: block; }
+
+  /* ====== SECURITY PAGE ====== */
+  .security-info { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+  .security-info-icon { font-size: 28px; }
+
   /* ====== FAB ====== */
   .fab { display: none; }
   @media (max-width: 768px) {
@@ -601,6 +640,47 @@
 </style>
 </head>
 <body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" width="46" height="54">
+        <ellipse cx="60" cy="100" rx="38" ry="32" fill="#f9a8d4"/>
+        <ellipse cx="60" cy="97" rx="36" ry="30" fill="#fbcfe8"/>
+        <ellipse cx="30" cy="74" rx="13" ry="15" fill="#f9a8d4" transform="rotate(-15 30 74)"/>
+        <ellipse cx="30" cy="74" rx="8" ry="10" fill="#f472b6" opacity="0.6" transform="rotate(-15 30 74)"/>
+        <ellipse cx="88" cy="72" rx="13" ry="15" fill="#f9a8d4" transform="rotate(15 88 72)"/>
+        <ellipse cx="88" cy="72" rx="8" ry="10" fill="#f472b6" opacity="0.6" transform="rotate(15 88 72)"/>
+        <ellipse cx="60" cy="82" rx="30" ry="28" fill="#fbcfe8"/>
+        <ellipse cx="60" cy="96" rx="16" ry="11" fill="#f9a8d4"/>
+        <circle cx="54" cy="95" r="4" fill="#be185d" opacity="0.45"/>
+        <circle cx="66" cy="95" r="4" fill="#be185d" opacity="0.45"/>
+        <circle cx="48" cy="80" r="5.5" fill="#1e293b"/>
+        <circle cx="72" cy="80" r="5.5" fill="#1e293b"/>
+        <circle cx="50" cy="78" r="2" fill="white"/>
+        <circle cx="74" cy="78" r="2" fill="white"/>
+        <path d="M50 90 Q60 98 70 90" stroke="#be185d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <ellipse cx="60" cy="60" rx="30" ry="8" fill="#c0392b"/>
+        <path d="M32 60 Q30 30 60 18 Q90 30 88 60 Z" fill="#e74c3c"/>
+        <circle cx="60" cy="14" r="7" fill="#f1c40f"/>
+      </svg>
+      <span style="font-family:var(--font-display);font-size:22px">KHUCHI-<span style="color:var(--accent)">FINANZAS</span></span>
+    </div>
+    <div class="login-title">Bienvenido 👋</div>
+    <div class="login-sub">Ingresá tus credenciales para continuar</div>
+    <div class="login-field">
+      <label>Usuario</label>
+      <input type="text" id="login-user" placeholder="Usuario" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">🔓 Ingresar</button>
+    <div class="login-error" id="login-error">Usuario o contraseña incorrectos</div>
+  </div>
+</div>
 
 <!-- HEADER -->
 <header class="header">
@@ -727,6 +807,7 @@
   </div>
   <div class="header-right">
     <button class="btn-icon" onclick="toggleTheme()" title="Modo oscuro/claro">🌙</button>
+    <button class="btn-icon" onclick="doLogout()" title="Cerrar sesión" style="color:var(--red)">🚪</button>
     <button class="btn-secondary" onclick="showExportMenu()">📤 Exportar</button>
     <button class="btn-primary" onclick="document.getElementById('importFile').click()">📥 Importar</button>
     <input type="file" id="importFile" accept=".json,.txt,application/json,text/plain" style="display:none" onchange="importData(event)">
@@ -750,6 +831,7 @@
     <div class="sidebar-label">Config</div>
     <button class="nav-item" onclick="showPage('categorias',this)"><span class="icon">🏷️</span> Categorías</button>
     <button class="nav-item" onclick="showPage('links',this)"><span class="icon">🔗</span> Links Útiles</button>
+    <button class="nav-item" onclick="showPage('seguridad',this)"><span class="icon">🔑</span> Seguridad</button>
   </nav>
 
   <!-- MAIN CONTENT -->
@@ -1325,6 +1407,65 @@
     </div>
 
 
+    <!-- ===== SEGURIDAD ===== -->
+    <div id="page-seguridad" class="page">
+      <h1 class="page-title">Seguridad</h1>
+      <p class="page-subtitle">Gestioná el acceso a tu dashboard</p>
+
+      <div class="security-info">
+        <div class="security-info-icon">🔐</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:3px">Sesión activa</div>
+          <div style="font-size:13px;color:var(--text-muted)">Sesión iniciada como <strong id="sec-usuario-activo" style="color:var(--accent)">—</strong>. La sesión se mantiene mientras el navegador esté abierto.</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:20px">
+        <!-- Cambiar contraseña -->
+        <div class="card">
+          <div class="card-title">🔑 Cambiar contraseña</div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label>Contraseña actual</label>
+            <input type="password" id="sec-pass-actual" placeholder="Tu contraseña actual">
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label>Nueva contraseña</label>
+            <input type="password" id="sec-pass-nueva" placeholder="Mínimo 4 caracteres">
+          </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label>Confirmar nueva contraseña</label>
+            <input type="password" id="sec-pass-confirmar" placeholder="Repetí la nueva contraseña">
+          </div>
+          <button class="btn-primary" onclick="cambiarPassword()" style="width:100%;justify-content:center">💾 Guardar nueva contraseña</button>
+          <div id="sec-pass-msg" style="margin-top:12px;font-size:13px;display:none;padding:10px 14px;border-radius:10px;text-align:center"></div>
+        </div>
+
+        <!-- Cambiar usuario -->
+        <div class="card">
+          <div class="card-title">👤 Cambiar nombre de usuario</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Usuario actual: <strong id="sec-user-display" style="color:var(--text)">—</strong></div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label>Contraseña actual (para confirmar)</label>
+            <input type="password" id="sec-user-pass" placeholder="Tu contraseña actual">
+          </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label>Nuevo nombre de usuario</label>
+            <input type="text" id="sec-user-nuevo" placeholder="Nuevo usuario">
+          </div>
+          <button class="btn-primary" onclick="cambiarUsuario()" style="width:100%;justify-content:center">💾 Guardar nuevo usuario</button>
+          <div id="sec-user-msg" style="margin-top:12px;font-size:13px;display:none;padding:10px 14px;border-radius:10px;text-align:center"></div>
+        </div>
+      </div>
+
+      <!-- Cerrar sesión -->
+      <div class="card" style="border-color:rgba(248,113,113,0.2)">
+        <div class="card-title" style="color:var(--red)">⚠️ Cerrar sesión</div>
+        <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:16px">Al cerrar sesión volverás a la pantalla de login. Tus datos financieros están guardados en este navegador y no se borran.</p>
+        <button class="btn-secondary" onclick="doLogout()" style="border-color:rgba(248,113,113,0.3);color:var(--red)">🚪 Cerrar sesión ahora</button>
+      </div>
+    </div>
+
+
     <!-- ===== IMPRESIONES ===== -->
     <div id="page-impresiones" class="page">
       <h1 class="page-title">Impresiones</h1>
@@ -1437,6 +1578,111 @@ function loadData() {
   if (raw) { try { data = { ...data, ...JSON.parse(raw) }; } catch(e){} }
 }
 
+// ====== AUTH ======
+const AUTH_KEY = 'khuchi_auth_v1';
+const SESSION_KEY = 'khuchi_session_v1';
+
+function getCredentials() {
+  const raw = localStorage.getItem(AUTH_KEY);
+  if (raw) { try { return JSON.parse(raw); } catch(e){} }
+  return { usuario: 'admin', clave: 'ies21' };
+}
+
+function saveCredentials(creds) {
+  localStorage.setItem(AUTH_KEY, JSON.stringify(creds));
+}
+
+function isLoggedIn() {
+  return sessionStorage.getItem(SESSION_KEY) === 'ok';
+}
+
+function doLogin() {
+  const creds = getCredentials();
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  if (user === creds.usuario && pass === creds.clave) {
+    sessionStorage.setItem(SESSION_KEY, 'ok');
+    document.getElementById('login-screen').classList.add('hidden');
+    errEl.classList.remove('show');
+    actualizarInfoSeguridad();
+  } else {
+    errEl.classList.add('show');
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+function actualizarInfoSeguridad() {
+  const creds = getCredentials();
+  const el1 = document.getElementById('sec-usuario-activo');
+  const el2 = document.getElementById('sec-user-display');
+  if (el1) el1.textContent = creds.usuario;
+  if (el2) el2.textContent = creds.usuario;
+}
+
+function cambiarPassword() {
+  const creds = getCredentials();
+  const actual = document.getElementById('sec-pass-actual').value;
+  const nueva = document.getElementById('sec-pass-nueva').value.trim();
+  const confirmar = document.getElementById('sec-pass-confirmar').value;
+  const msg = document.getElementById('sec-pass-msg');
+
+  function showMsg(text, ok) {
+    msg.style.display = 'block';
+    msg.textContent = text;
+    msg.style.background = ok ? 'rgba(52,211,153,0.12)' : 'rgba(248,113,113,0.12)';
+    msg.style.border = ok ? '1px solid rgba(52,211,153,0.3)' : '1px solid rgba(248,113,113,0.3)';
+    msg.style.color = ok ? 'var(--green)' : 'var(--red)';
+    if (ok) setTimeout(() => { msg.style.display='none'; }, 3000);
+  }
+
+  if (actual !== creds.clave) { showMsg('❌ La contraseña actual es incorrecta', false); return; }
+  if (nueva.length < 4) { showMsg('❌ La nueva contraseña debe tener al menos 4 caracteres', false); return; }
+  if (nueva !== confirmar) { showMsg('❌ Las contraseñas no coinciden', false); return; }
+
+  saveCredentials({ ...creds, clave: nueva });
+  document.getElementById('sec-pass-actual').value = '';
+  document.getElementById('sec-pass-nueva').value = '';
+  document.getElementById('sec-pass-confirmar').value = '';
+  showMsg('✅ Contraseña actualizada correctamente', true);
+  toast('Contraseña actualizada', '🔑');
+}
+
+function cambiarUsuario() {
+  const creds = getCredentials();
+  const pass = document.getElementById('sec-user-pass').value;
+  const nuevo = document.getElementById('sec-user-nuevo').value.trim();
+  const msg = document.getElementById('sec-user-msg');
+
+  function showMsg(text, ok) {
+    msg.style.display = 'block';
+    msg.textContent = text;
+    msg.style.background = ok ? 'rgba(52,211,153,0.12)' : 'rgba(248,113,113,0.12)';
+    msg.style.border = ok ? '1px solid rgba(52,211,153,0.3)' : '1px solid rgba(248,113,113,0.3)';
+    msg.style.color = ok ? 'var(--green)' : 'var(--red)';
+    if (ok) setTimeout(() => { msg.style.display='none'; }, 3000);
+  }
+
+  if (pass !== creds.clave) { showMsg('❌ La contraseña es incorrecta', false); return; }
+  if (nuevo.length < 2) { showMsg('❌ El usuario debe tener al menos 2 caracteres', false); return; }
+
+  saveCredentials({ ...creds, usuario: nuevo });
+  document.getElementById('sec-user-pass').value = '';
+  document.getElementById('sec-user-nuevo').value = '';
+  actualizarInfoSeguridad();
+  showMsg('✅ Usuario actualizado correctamente', true);
+  toast('Usuario actualizado', '👤');
+}
+
 // ====== INIT ======
 loadData();
 const today = new Date();
@@ -1444,12 +1690,25 @@ document.getElementById('mov-fecha').value = today.toISOString().split('T')[0];
 initFilterMeses();
 renderAll();
 
+// Check login on load
+document.addEventListener('DOMContentLoaded', function() {
+  if (!isLoggedIn()) {
+    document.getElementById('login-screen').classList.remove('hidden');
+  } else {
+    document.getElementById('login-screen').classList.add('hidden');
+    actualizarInfoSeguridad();
+  }
+});
+
+
 // ====== THEME ======
 function toggleTheme() {
   const html = document.documentElement;
   const isDark = html.getAttribute('data-theme') === 'dark';
   html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.querySelector('[onclick="toggleTheme()"]').textContent = isDark ? '🌙' : '☀️';
+  document.querySelectorAll('[onclick="toggleTheme()"]').forEach(btn => {
+    btn.textContent = isDark ? '🌙' : '☀️';
+  });
 }
 
 // ====== NAVIGATION ======
@@ -2899,9 +3158,11 @@ function imprimirReporte() {
     <button class="drawer-item" onclick="mobileNav('impresiones',null);toggleDrawer()"><span class="di-icon">🖨️</span>Reportes</button>
     <button class="drawer-item" onclick="mobileNav('categorias',null);toggleDrawer()"><span class="di-icon">🏷️</span>Categorías</button>
     <button class="drawer-item" onclick="mobileNav('links',null);toggleDrawer()"><span class="di-icon">🔗</span>Links</button>
+    <button class="drawer-item" onclick="mobileNav('seguridad',null);toggleDrawer()"><span class="di-icon">🔑</span>Seguridad</button>
     <button class="drawer-item" onclick="showExportMenu();toggleDrawer()"><span class="di-icon">📤</span>Exportar</button>
     <button class="drawer-item" onclick="document.getElementById('importFile').click();toggleDrawer()"><span class="di-icon">📥</span>Importar</button>
     <button class="drawer-item" onclick="toggleTheme();toggleDrawer()"><span class="di-icon">🌙</span>Tema</button>
+    <button class="drawer-item" onclick="doLogout();toggleDrawer()" style="color:var(--red)"><span class="di-icon">🚪</span>Salir</button>
   </div>
 </div>
 
