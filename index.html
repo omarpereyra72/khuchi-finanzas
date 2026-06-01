@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🐷 KHUCHI-FINANZAS — Finanzas Personales</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --bg: #0a0e17;
@@ -1010,7 +1011,12 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Historial</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+          <div class="card-title" style="margin-bottom:0">Historial</div>
+          <button class="btn-secondary" onclick="exportMovimientosExcel()" title="Exportar movimientos filtrados a Excel" style="font-size:13px; padding:6px 14px; gap:6px;">
+            📊 Exportar Excel
+          </button>
+        </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Categoría</th><th>Sub</th><th>Monto</th><th>Notas</th><th></th></tr></thead>
@@ -3506,6 +3512,45 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+
+// ====== EXPORTAR MOVIMIENTOS A EXCEL ======
+function exportMovimientosExcel() {
+  const movs = getFilteredMovs();
+  if (!movs.length) {
+    toast('No hay movimientos para exportar', '⚠️');
+    return;
+  }
+
+  // Armar filas con el orden solicitado: Fecha, Tipo, Monto, Categoria, Descripcion
+  const filas = movs.map(m => ({
+    'Fecha':       m.fecha,
+    'Tipo':        m.tipo.charAt(0).toUpperCase() + m.tipo.slice(1),
+    'Monto':       m.monto,
+    'Categoria':   m.cat || '—',
+    'Descripcion': m.desc
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(filas);
+
+  // Ancho de columnas
+  ws['!cols'] = [
+    { wch: 12 },  // Fecha
+    { wch: 10 },  // Tipo
+    { wch: 14 },  // Monto
+    { wch: 20 },  // Categoria
+    { wch: 36 },  // Descripcion
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Movimientos');
+
+  // Nombre de archivo con el mes filtrado
+  const mes = document.getElementById('filter-mes')?.value || 'todos';
+  const filename = 'KHUCHI_Movimientos_' + mes + '.xlsx';
+
+  XLSX.writeFile(wb, filename);
+  toast('Excel exportado correctamente', '✅');
+}
 
 // Android back button support
 window.addEventListener('popstate', function(e) {
